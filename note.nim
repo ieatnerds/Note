@@ -8,6 +8,7 @@
 
 import strutils, osproc, os, times
 
+var file: File
 var message: string
 message = ""
 
@@ -30,6 +31,10 @@ proc diag(): void =
     # the message for testing purposes.
     head()
 
+proc fiop(): void =
+    # This is the flag operation for specifying a file
+    echo ""  # So it compiles
+
 ###            ###
 ### Procedures ###
 ###            ###
@@ -51,13 +56,14 @@ proc executeArg(arg: string): void =
         raise newException(argError,"Argument not recognized.")
 
 proc noteFile(filename = "notes.txt"): File =
+    # Used to specify the file to save notes into
     var o = open(filename, fmAppend)
     return o
 
 ###      ###
 ### Main ###
 ###      ###
-var o = noteFile()
+file = noteFile()
 let arguments = commandLineParams()
 
 for argument in arguments:
@@ -70,6 +76,6 @@ for argument in arguments:
    
 message.add("\n")
 message.add("------------------------------")
-o.writeLine(message)
+file.writeLine(message)
 
-o.close()
+file.close()
