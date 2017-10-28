@@ -14,6 +14,10 @@ message = ""
 type
     argError* = object of Exception
 
+###       ###
+### Flags ###
+###       ###
+
 proc head(): void =
     # append date to head of message
     message = getDateStr()
@@ -26,14 +30,18 @@ proc diag(): void =
     # the message for testing purposes.
     head()
 
-proc isarg(arg: string): bool =
+###            ###
+### Procedures ###
+###            ###
+ 
+proc isArg(arg: string): bool =
     # Returns true if passed string starts with "-"
     if arg.startsWith("-"):
         return true
     else:
         return false
 
-proc executearg(arg: string): void =
+proc executeArg(arg: string): void =
     # executes given argument
     if(toLowerAscii(arg) == "-t"):  # t for Time
         head()
@@ -41,14 +49,20 @@ proc executearg(arg: string): void =
         diag()
     else:
         raise newException(argError,"Argument not recognized.")
-            
-var
-    o = open("notes.txt", fmAppend)
+
+proc noteFile(filename = "notes.txt"): File =
+    var o = open(filename, fmAppend)
+    return o
+
+###      ###
+### Main ###
+###      ###
+var o = noteFile()
 let arguments = commandLineParams()
 
 for argument in arguments:
-    if(isarg(argument)):
-        executearg(argument)
+    if(isArg(argument)):
+        executeArg(argument)
 
     else:
         message.add(argument)
