@@ -1,4 +1,9 @@
 # Nicholas Kelly
+# This will create a note based on the command line arguments used
+# to run the program. 
+#
+# this note will have several options to append things such as dates to the
+# note. these messages will be written to a file called notes.txt
 
 
 import strutils, osproc, os, times
@@ -16,6 +21,11 @@ proc head(): void =
     message.add(getClockStr())
     message.add("\n")
 
+proc diag(): void =
+    # this function will add all other flags to 
+    # the message for testing purposes.
+    head()
+
 proc isarg(arg: string): bool =
     # Returns true if passed string starts with "-"
     if arg.startsWith("-"):
@@ -25,8 +35,10 @@ proc isarg(arg: string): bool =
 
 proc executearg(arg: string): void =
     # executes given argument
-    if(toLowerAscii(arg) == "-t"):  # t for Timex
+    if(toLowerAscii(arg) == "-t"):  # t for Time
         head()
+    if(tolowerAscii(arg) == "-d"):  # d for diagnostics
+        diag()
     else:
         raise newException(argError,"Argument not recognized.")
             
