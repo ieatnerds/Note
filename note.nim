@@ -6,7 +6,9 @@
 # note. these messages will be written to a file called notes.txt
 
 
-import strutils, osproc, os, times
+import strutils, osproc, os, times, terminal
+
+var appType: string = "console"
 
 var file: File
 var message: string
@@ -35,6 +37,15 @@ proc fiop(): void =
     # This is the flag operation for specifying a file
     echo ""  # So it compiles
 
+proc help(): void =
+    # This flag will display help options to the console when used.
+    setForegroundColor(fgBlue)
+    stdout.write "Help! \n"
+    writeStyled  "This is the help menu for note.nim \n"
+    stdout.write "More coming soon!"
+    resetAttributes()
+    stdout.write "\n"
+    
 ###            ###
 ### Procedures ###
 ###            ###
@@ -52,6 +63,8 @@ proc executeArg(arg: string): void =
         head()
     if(tolowerAscii(arg) == "-d"):  # d for diagnostics
         diag()
+    if(tolowerAscii(arg) == "-h"):
+        help()
     else:
         raise newException(argError,"Argument not recognized.")
 
