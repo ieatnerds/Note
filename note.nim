@@ -81,22 +81,22 @@ proc writeMess(message: string): void =
     file.writeLine(message)
     file.close()
 
-###      ###
-### Main ###
-###      ###
-file = noteFile()
-let arguments = commandLineParams()
-
-for argument in arguments:
-    if(isArg(argument)):
-        executeArg(argument)
-
-    else:
-        message.add(argument)
-        message.add(" ")
-   
-message.add("\n")
-message.add("------------------------------")
-file.writeLine(message)
-
-file.close()
+proc main(): void =
+    let arguments = commandLineParams()
+    var i = 0
+    for argument in arguments:
+        if (isArg(argument)):
+            if (argument == "-h"):
+                executeArg(argument)
+                quit()
+            else:
+                executeArg(argument)
+        else:
+            message.add(argument)
+            message.add(" ")
+    file = noteFile()
+    message.add("\n")
+    message.add("----------------------------")
+    writeMess(message)
+            
+main()
