@@ -73,6 +73,14 @@ proc noteFile(filename = "notes.txt"): File =
     var o = open(filename, fmAppend)
     return o
 
+proc writeMess(message: string): void =
+    # this procedure will write a givne message to the open file 
+    # and then it will close the file, assuming that the file should not 
+    # be kept open when we are no longer using it.
+    # not that it matters when the program is going to terminate anyways.
+    file.writeLine(message)
+    file.close()
+
 ###      ###
 ### Main ###
 ###      ###
