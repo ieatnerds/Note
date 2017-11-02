@@ -6,7 +6,7 @@
 # note. these messages will be written to a file called notes.txt
 
 
-import strutils, osproc, os, times, terminal
+import strutils, osproc, os, times, terminal,sequtils
 
 var appType: string = "console"
 
@@ -82,19 +82,26 @@ proc writeMess(message: string): void =
     file.close()
 
 proc main(): void =
-    let arguments = commandLineParams()
+    # Main will do the heavy liftig of the program, as usual, tying everything
+    # else in the program together.
+    var arguments = commandLineParams()
     var i = 0
-    for argument in arguments:
-        if (isArg(argument)):
-            if (argument == "-h"):
-                executeArg(argument)
-                quit()
-            else:
-                executeArg(argument)
-        else:
-            message.add(argument)
-            message.add(" ")
+    var k = 0
     file = noteFile()
+    for i in 0..(high(arguments)-1):
+        if (isArg(arguments[i])):
+            if (arguments[i] == "-h"):
+                executeArg(arguments[i])
+                quit()
+            if (arguments[i] == "-f"):
+                k = i+1
+                file = noteFile(arguments[k])
+                arguments.delete(k)  # arguments[k])
+            else:
+                executeArg(arguments[i])
+        else:
+            message.add(arguments[i])
+            message.add(" ")
     message.add("\n")
     message.add("----------------------------")
     writeMess(message)
