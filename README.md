@@ -1,12 +1,12 @@
 # Note
-A quick terminal based note taker written in Nim.
+#### A quick terminal based note taker written in Nim.
 
-## Install
+## Installation
 First have nim installed. and open the note folder inside of a terminal,
  then run the following command.
 `nim c -d:release note`
 
-## Example
+## Examples
 
 Currently as we don't install to any path ./ in the note directory is
 the only way to run it. 
