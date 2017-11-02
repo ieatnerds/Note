@@ -100,7 +100,6 @@ proc main(): void =
             if(arguments[i] == "-h"):
                 help()
             if(arguments[i] == "-f"):
-                echo "array out of bound?"
                 k = i+1
                 file = noteFile(arguments[k])
                 arguments.delete(k)  # arguments[k])
