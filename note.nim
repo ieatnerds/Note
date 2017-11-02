@@ -12,11 +12,9 @@
 ###         ###
 
 import strutils, osproc, os, times, terminal, sequtils
-
-var appType: string = "console"
-
-var file: File
-var message: string
+var
+    file: File
+    message: string
 message = ""
 
 type
@@ -58,18 +56,6 @@ proc isArg(arg: string): bool =
     else:
         return false
 
-proc executeArg(arg: string): void =
-
-    ### Getting Errors, deprecated for time being ###
-
-    # Executes given argument
-    if(arg == "-t"):  # t for Time
-        head()
-    if(tolowerAscii(arg) == "-h"):
-        help()
-    else:
-        raise newException(argError, "Argument not recognized.")
-
 proc noteFile(filename = "notes.txt"): File =
     # Used to specify the file to save notes into
     result = open(filename, fmAppend)
@@ -84,11 +70,11 @@ proc writeMess(message: string): void =
 proc main(): void =
     # Main will do the heavy lifting of the program, as usual, tying everything
     # else in the program together.
-    var arguments = commandLineParams()
-    var i = 0
-    var k = 0
+    var
+        arguments = commandLineParams()
+        k = 0
     file = noteFile()
-    for i in 0..(high(arguments)-1):
+    for i in 0..(high(arguments)):
         if(isArg(arguments[i])):
             if(arguments[i] == "-h"): # help
                 help()
@@ -98,8 +84,6 @@ proc main(): void =
                 arguments.delete(k)
             if(arguments[i] == "-t"): # time append
                 head()
-            # else:
-            #    executeArg(arguments[i])
         else:
             message.add(arguments[i])
             message.add(" ")
