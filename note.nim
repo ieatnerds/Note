@@ -6,7 +6,7 @@
 # note. these messages will be written to a file called notes.txt
 
 
-import strutils, osproc, os, times, terminal,sequtils
+import strutils, osproc, os, times, terminal, sequtils
 
 var appType: string = "console"
 
@@ -42,7 +42,11 @@ proc help(): void =
     setForegroundColor(fgBlue)
     stdout.write "Help! \n"
     writeStyled  "This is the help menu for note.nim \n"
-    stdout.write "More coming soon!"
+    stdout.write "More coming soon!\n"
+    stdout.write "The current arguments for this program include\n"
+    writeStyled "1. -h For the help menu\n"
+    writeStyled "2. -t To append time to the top of the note\n"
+    writeStyled "3. -f For specifying a note txt file.\n"
     resetAttributes()
     stdout.write "\n"
     
@@ -88,10 +92,10 @@ proc main(): void =
     var i = 0
     var k = 0
     file = noteFile()
-    for i in 0..(high(arguments)-1):
+    for i in 0..(high(arguments)+1):
         if (isArg(arguments[i])):
             if (arguments[i] == "-h"):
-                executeArg(arguments[i])
+                executeArg("-h")
                 quit()
             if (arguments[i] == "-f"):
                 k = i+1
@@ -102,6 +106,7 @@ proc main(): void =
         else:
             message.add(arguments[i])
             message.add(" ")
+            
     message.add("\n")
     message.add("----------------------------")
     writeMess(message)
