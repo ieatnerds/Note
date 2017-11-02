@@ -1,9 +1,11 @@
-# Nicholas Kelly
+# ieatnerds(Nicholas Kelly)
+# importantnk@gmail.com
+#
 # This will create a note based on the command line arguments used
 # to run the program. 
 #
-# this note will have several options to append things such as dates to the
-# note. these messages will be written to a file called notes.txt
+# This note will have several options to append things such as dates to the
+# note. These messages will be written to a file called notes.txt
 
 ###         ###
 ### Imports ###
@@ -25,14 +27,14 @@ type
 ###       ###
 
 proc head(): void =
-    # append date to head of message
+    # Append date to head of message
     message = getDateStr()
     message.add("-->")
     message.add(getClockStr())
     message.add("\n")
 
 proc diag(): void =
-    # this function will add all other flags to 
+    # This function will add all other flags to 
     # the message for testing purposes.
     head()
 
@@ -65,7 +67,7 @@ proc executeArg(arg: string): void =
 
     ### Getting Errors, deprecated for time being ###
 
-    # executes given argument
+    # Executes given argument
     if(arg == "-t"):  # t for Time
         head()
     if(tolowerAscii(arg) == "-d"):  # d for diagnostics
@@ -80,10 +82,9 @@ proc noteFile(filename = "notes.txt"): File =
     result = open(filename, fmAppend)
     
 proc writeMess(message: string): void =
-    # this procedure will write a givne message to the open file 
+    # This procedure will write a give message to the open file 
     # and then it will close the file, assuming that the file should not 
     # be kept open when we are no longer using it.
-    # not that it matters when the program is going to terminate anyways.
     file.writeLine(message)
     file.close()
 
@@ -101,7 +102,7 @@ proc main(): void =
             if(arguments[i] == "-f"):
                 k = i+1
                 file = noteFile(arguments[k])
-                arguments.delete(k)  # arguments[k])
+                arguments.delete(k)
             if(arguments[i] == "-t"):
                 head()
             # else:
