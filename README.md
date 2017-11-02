@@ -11,6 +11,10 @@ First have nim installed. and open the note folder inside of a terminal,
 Currently as we don't install to any path ./ in the note directory is
 the only way to run it. 
 
+`./note Hello World`
+This leaves just a plain note in the notes.txt file with no date or any
+other information attached to it.
+
 `./note -t Hello World`
 This will create a timestamped note in the default notes.txt file that
 says 'Hello World'
