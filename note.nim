@@ -77,9 +77,8 @@ proc executeArg(arg: string): void =
 
 proc noteFile(filename = "notes.txt"): File =
     # Used to specify the file to save notes into
-    var o = open(filename, fmAppend)
-    return o
-
+    result = open(filename, fmAppend)
+    
 proc writeMess(message: string): void =
     # this procedure will write a givne message to the open file 
     # and then it will close the file, assuming that the file should not 
