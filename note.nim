@@ -48,6 +48,7 @@ proc help(): void =
     writeStyled "3. -f For specifying a note txt file.\n"
     resetAttributes()
     stdout.write "\n"
+    quit()
     
 ###            ###
 ### Procedures ###
@@ -61,8 +62,11 @@ proc isArg(arg: string): bool =
         return false
 
 proc executeArg(arg: string): void =
+
+    ### Getting Errors, deprecated for time being ###
+
     # executes given argument
-    if(toLowerAscii(arg) == "-t"):  # t for Time
+    if(arg == "-t"):  # t for Time
         head()
     if(tolowerAscii(arg) == "-d"):  # d for diagnostics
         diag()
@@ -91,17 +95,19 @@ proc main(): void =
     var i = 0
     var k = 0
     file = noteFile()
-    for i in 0..(high(arguments)+1):
+    for i in 0..(high(arguments)-1):
         if(isArg(arguments[i])):
             if(arguments[i] == "-h"):
-                executeArg("-h")
-                quit()
+                help()
             if(arguments[i] == "-f"):
+                echo "array out of bound?"
                 k = i+1
                 file = noteFile(arguments[k])
                 arguments.delete(k)  # arguments[k])
-            else:
-                executeArg(arguments[i])
+            if(arguments[i] == "-t"):
+                head()
+            # else:
+            #    executeArg(arguments[i])
         else:
             message.add(arguments[i])
             message.add(" ")
