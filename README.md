@@ -4,7 +4,7 @@ A quick terminal based note taker written in Nim.
 ## Install
 First have nim installed. and open the note folder inside of a terminal,
  then run the following command.
-'nim c -d:release note'
+`nim c -d:release note`
 
 ## Example
 
