@@ -33,11 +33,6 @@ proc head(): void =
     message.add(getClockStr())
     message.add("\n")
 
-proc diag(): void =
-    # This function will add all other flags to 
-    # the message for testing purposes.
-    head()
-
 proc help(): void =
     # This flag will display help options to the console when used.
     setForegroundColor(fgBlue)
@@ -70,8 +65,6 @@ proc executeArg(arg: string): void =
     # Executes given argument
     if(arg == "-t"):  # t for Time
         head()
-    if(tolowerAscii(arg) == "-d"):  # d for diagnostics
-        diag()
     if(tolowerAscii(arg) == "-h"):
         help()
     else:
@@ -89,7 +82,7 @@ proc writeMess(message: string): void =
     file.close()
 
 proc main(): void =
-    # Main will do the heavy liftig of the program, as usual, tying everything
+    # Main will do the heavy lifting of the program, as usual, tying everything
     # else in the program together.
     var arguments = commandLineParams()
     var i = 0
@@ -97,13 +90,13 @@ proc main(): void =
     file = noteFile()
     for i in 0..(high(arguments)-1):
         if(isArg(arguments[i])):
-            if(arguments[i] == "-h"):
+            if(arguments[i] == "-h"): # help
                 help()
-            if(arguments[i] == "-f"):
+            if(arguments[i] == "-f"): # file
                 k = i+1
                 file = noteFile(arguments[k])
                 arguments.delete(k)
-            if(arguments[i] == "-t"):
+            if(arguments[i] == "-t"): # time append
                 head()
             # else:
             #    executeArg(arguments[i])
