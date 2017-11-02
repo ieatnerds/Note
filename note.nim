@@ -5,6 +5,9 @@
 # this note will have several options to append things such as dates to the
 # note. these messages will be written to a file called notes.txt
 
+###         ###
+### Imports ###
+###         ###
 
 import strutils, osproc, os, times, terminal, sequtils
 
@@ -33,15 +36,11 @@ proc diag(): void =
     # the message for testing purposes.
     head()
 
-proc fiop(): void =
-    # This is the flag operation for specifying a file
-    echo ""  # So it compiles
-
 proc help(): void =
     # This flag will display help options to the console when used.
     setForegroundColor(fgBlue)
     stdout.write "Help! \n"
-    writeStyled  "This is the help menu for note.nim \n"
+    writeStyled "This is the help menu for note.nim \n"
     stdout.write "More coming soon!\n"
     stdout.write "The current arguments for this program include\n"
     writeStyled "1. -h For the help menu\n"
@@ -70,7 +69,7 @@ proc executeArg(arg: string): void =
     if(tolowerAscii(arg) == "-h"):
         help()
     else:
-        raise newException(argError,"Argument not recognized.")
+        raise newException(argError, "Argument not recognized.")
 
 proc noteFile(filename = "notes.txt"): File =
     # Used to specify the file to save notes into
@@ -93,11 +92,11 @@ proc main(): void =
     var k = 0
     file = noteFile()
     for i in 0..(high(arguments)+1):
-        if (isArg(arguments[i])):
-            if (arguments[i] == "-h"):
+        if(isArg(arguments[i])):
+            if(arguments[i] == "-h"):
                 executeArg("-h")
                 quit()
-            if (arguments[i] == "-f"):
+            if(arguments[i] == "-f"):
                 k = i+1
                 file = noteFile(arguments[k])
                 arguments.delete(k)  # arguments[k])
@@ -110,5 +109,9 @@ proc main(): void =
     message.add("\n")
     message.add("----------------------------")
     writeMess(message)
-            
+
+###      ###
+### Main ###
+###      ###
+           
 main()
