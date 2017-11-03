@@ -81,7 +81,9 @@ proc main(): void =
             if(arguments[i] == "-f"): # file
                 k = i+1
                 file = noteFile(arguments[k])
-                arguments.delete(k)
+                arguments[k] = ""
+                # arguments.delete(k)
+                # arguments.add("")
             if(arguments[i] == "-t"): # time append
                 head()
         else:
