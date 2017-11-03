@@ -59,7 +59,7 @@ proc isArg(arg: string): bool =
 
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
-  result = open(filename, fmAppend)
+  open(filename, fmAppend)
     
 proc writeMess(message: string): void =
   # This procedure will write a give message to the open file 
