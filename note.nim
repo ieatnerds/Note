@@ -45,6 +45,10 @@ proc help(): void =
   resetAttributes()
   stdout.write "\n"
   quit()
+
+proc clear(): void =
+  removeFile("notes.txt")
+  quit()
     
 ###            ###
 ### Procedures ###
@@ -77,6 +81,8 @@ proc main(): void =
   file = noteFile()
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
+      if(arguments[i] == "-c"):
+        clear()
       if(arguments[i] == "-h"): # help
         help()
       if(arguments[i] == "-f"): # file
