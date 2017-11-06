@@ -51,8 +51,8 @@ proc help(): void =
   stdout.write "\n"
   quit()
 
-proc clear(): void =
-  removeFile("notes.txt")
+proc clear(file: string = "notes.txt"): void =
+  removeFile(file)
   quit()
     
 ###            ###
@@ -74,14 +74,14 @@ proc createTable(): void =
   	            name string,
   	            date string)""")
 
-proc insertData(Name:string = "nil"): void =
+proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
-  var Date = getDateStr()
-  db.exec(sql"INSERT INTO meta (name, date) values(?, ?)", Name, Date)
+  var date = getDateStr()
+  db.exec(sql"INSERT INTO meta (name, date) values(?, ?)", name, date)
 
-proc getData(): void =
+proc getData(): string =
   # This will return the names on all entries in the meta table
-  db.exec(sql"SELECT name FROM meta")
+  var data = db.getValue(sql"SELECT name FROM meta")
 
 proc inData(Name:string = "nil"): bool =
   # This will be used to check if a name is already in the database
@@ -110,19 +110,22 @@ proc main(): void =
     arguments = commandLineParams()
     k = 0
   file = noteFile()
+  createTable()
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
         clear()
-      if(arguments[i] == "-h"): # Help
+      elif(arguments[i] == "-h"): # Help
         help()
-      if(arguments[i] == "-f"): # File
+      elif(arguments[i] == "-f"): # File
         k = i+1
         file = noteFile(arguments[k])
+        if(not inData(arguments[k])):
+          insertData(arguments[k])
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
-      if(arguments[i] == "-t"): # time append
+      elif(arguments[i] == "-t"): # time append
         head()
       else:
         # throw error hcdere
@@ -130,7 +133,7 @@ proc main(): void =
     else:
       message.add(arguments[i])
       message.add(" ")
-            
+      
   message.add("\n")
   message.add("----------------------------")
   writeMess(message)
@@ -138,6 +141,7 @@ proc main(): void =
 ###      ###
 ### Main ###
 ###      ###
-           
+
 main()
+echo getData()
 db.close()
