@@ -18,12 +18,16 @@ var
   file: File
   message: string = ""
 
+### Databse Setup ###
+var exist = 0
+if(fileExists("metadata.db")):
+  exist = 1
+
+let db = open("metadata.db", nil, nil, nil)
+
 ### Types ###
 type
   argError* = object of Exception
-
-### db File ###
-let db = open("metadata.db", nil, nil, nil)
 
 ###       ###
 ### Flags ###
@@ -68,8 +72,7 @@ proc isArg(arg: string): bool =
 
 proc createTable(): void =
   # This will be used to create the metadata table if it is not
-  # already present in the database  
-  db.exec(sql"DROP TABLE IF EXISTS meta")
+  # already present in the database
   db.exec(sql"""CREATE TABLE meta (
   	            name string,
   	            date string)""")
@@ -77,20 +80,24 @@ proc createTable(): void =
 proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
   var date = getDateStr()
-  db.exec(sql"INSERT INTO meta (name, date) values(?, ?)", name, date)
+  db.exec(sql"BEGIN")
+  db.exec(sql"INSERT INTO meta (name, date) VALUES(?, ?)", name, date)
+  db.exec(sql"COMMIT")
 
 proc getData(): string =
   # This will return the names on all entries in the meta table
   var data: string
-  for x in db.fastRows(sql"select * from meta"):
-    data.add(x[0])
+  echo "start"
+  for x in db.rows(sql"SELECT * FROM meta"):
+    echo x
+  echo "end"
   return data
 
 proc inData(Name:string = "nil"): bool =
   # This will be used to check if a name is already in the database
   # This will return true upon success and false upon failure
   try:
-    db.exec(sql"select name FROM meta where name = ?", Name)
+    db.exec(sql"SELECT name FROM meta WHERE name = ?", Name)
     return true
   except:
     return false
@@ -113,7 +120,9 @@ proc main(): void =
     arguments = commandLineParams()
     k = 0
   file = noteFile()
-  createTable()
+  if(exist != 1):
+    createTable()
+    
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
@@ -146,5 +155,6 @@ proc main(): void =
 ###      ###
 
 main()
-echo getData()
+var luck = getData()
+echo luck
 db.close()
