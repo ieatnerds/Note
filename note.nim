@@ -11,15 +11,19 @@
 ### Imports ###
 ###         ###
 
-import strutils, osproc, os, times, terminal, sequtils
-### Variables###
+import strutils, osproc, os, times, terminal, sequtils, db_sqlite
+
+### Variables ###
 var
   file: File
   message: string = ""
 
-###Types###
+### Types ###
 type
   argError* = object of Exception
+
+### db File ###
+let db = open("metadata.db", nil, nil, nil)
 
 ###       ###
 ### Flags ###
@@ -41,7 +45,8 @@ proc help(): void =
   stdout.write "The current arguments for this program include\n"
   writeStyled "1. -h For the help menu\n"
   writeStyled "2. -t To append time to the top of the note\n"
-  writeStyled "3. -f For specifying a note txt file.\n"
+  writeStyled "3. -f For specifying a note txt file\n"
+  writeStyled "4. -c To remove notes.txt\n"
   resetAttributes()
   stdout.write "\n"
   quit()
@@ -60,6 +65,27 @@ proc isArg(arg: string): bool =
     return true
   else:
     return false
+
+proc createTable(): void =
+  # This will be used to create the metadata table if it is not
+  # already present in the database  
+  db.exec(sql"DROP TABLE IF EXISTS meta")
+  db.exec(sql"""CREATE TABLE meta (
+  	            name string,
+  	            date string)""")
+
+proc insertData(Name:string = "nil"): void =
+  # Used to insert a new note file name into the database
+  var Date = getDateStr()
+  db.exec(sql"INSERT INTO meta (name, date) values(Name, Date)")
+
+proc getData(): void =
+  # This will return the names on all entries in the meta table
+    db.exec(sql"SELECT name FROM meta")
+
+proc inData(Name:string = "nil"): bool =
+  # This will be used to check if a name is already in the database
+  echo "" # for compile
 
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
@@ -81,18 +107,21 @@ proc main(): void =
   file = noteFile()
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
-      if(arguments[i] == "-c"):
+      if(arguments[i] == "-c"): # Clear
         clear()
-      if(arguments[i] == "-h"): # help
+      if(arguments[i] == "-h"): # Help
         help()
-      if(arguments[i] == "-f"): # file
+      if(arguments[i] == "-f"): # File
         k = i+1
         file = noteFile(arguments[k])
-        arguments[k] = ""
+        arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
       if(arguments[i] == "-t"): # time append
         head()
+      else:
+        # throw error hcdere
+        raise newException(argError, "Argument not recognized.")
     else:
       message.add(arguments[i])
       message.add(" ")
