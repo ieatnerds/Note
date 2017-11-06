@@ -77,15 +77,20 @@ proc createTable(): void =
 proc insertData(Name:string = "nil"): void =
   # Used to insert a new note file name into the database
   var Date = getDateStr()
-  db.exec(sql"INSERT INTO meta (name, date) values(Name, Date)")
+  db.exec(sql"INSERT INTO meta (name, date) values(?, ?)", Name, Date)
 
 proc getData(): void =
   # This will return the names on all entries in the meta table
-    db.exec(sql"SELECT name FROM meta")
+  db.exec(sql"SELECT name FROM meta")
 
 proc inData(Name:string = "nil"): bool =
   # This will be used to check if a name is already in the database
-  echo "" # for compile
+  # This will return true upon success and false upon failure
+  try:
+    db.exec(sql"select name FROM meta where name = ?", Name)
+    return true
+  except:
+    return false
 
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
@@ -135,3 +140,4 @@ proc main(): void =
 ###      ###
            
 main()
+db.close()
