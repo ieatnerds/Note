@@ -3,3 +3,4 @@ nimcache/
 note
 *.txt
 *.db
+*.sql

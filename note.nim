@@ -81,7 +81,10 @@ proc insertData(name:string = "nil"): void =
 
 proc getData(): string =
   # This will return the names on all entries in the meta table
-  var data = db.getValue(sql"SELECT name FROM meta")
+  var data: string
+  for x in db.fastRows(sql"select * from meta"):
+    data.add(x[0])
+  return data
 
 proc inData(Name:string = "nil"): bool =
   # This will be used to check if a name is already in the database
