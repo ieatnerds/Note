@@ -139,6 +139,7 @@ proc writeMess(message: string): void =
   file.close()
 
 proc print_db(filename = "metadata.db"): void =
+  #prints out names of all storage files
   var data = getData()
   for i in 0..(high(data)):
     echo data[i] 
@@ -184,7 +185,7 @@ proc main(): void =
       elif(arguments[i] == "-l"): # Print from SQL
         print_db()
       
-      elif(arguments[i] == "-p"):
+      elif(arguments[i] == "-p"): # Print File Contents
         print_file(arguments[i+1])
  
       else:
