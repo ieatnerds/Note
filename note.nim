@@ -136,6 +136,7 @@ proc main(): void =
   var
     arguments = commandLineParams()
     k = 0
+    filename = "notes.txt"
   file = noteFile()
   if(exist != 1):
     createTable()
@@ -152,10 +153,8 @@ proc main(): void =
       elif(arguments[i] == "-f"): # File
         k = i+1
         file = noteFile(arguments[k])
+        filename = arguments[k]
         
-        if(not inData(arguments[k])):
-          insertData(arguments[k])
-          
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
@@ -171,6 +170,9 @@ proc main(): void =
       message.add(arguments[i])
       message.add(" ")
       
+  if(not inData(filename)):
+    insertData(filename)
+                
   message.add("\n")
   message.add("----------------------------")
   writeMess(message)
