@@ -11,7 +11,9 @@
 ### Imports ###
 ###         ###
 
-import strutils, osproc, os, times, terminal, sequtils, db_sqlite, typetraits
+import 
+  strutils, osproc, os, times,
+  terminal, sequtils, db_sqlite, typetraits
 
 ### Variables ###
 var
@@ -30,7 +32,7 @@ type
   argError* = object of Exception
 
 ### prototype ###
-proc delData(name:string = "nil"): void
+proc delData(name:string ="nil"): void
 
 ###       ###
 ### Flags ###
@@ -67,17 +69,13 @@ proc clear(files: seq = @["notes.txt"]): void =
   echo "\nPlease enter y or n."
   var ans = readLine(stdin)
   if(ans == "y"):
-    for i in 0..high(files):
-      removeFile(files[i]) #removes actual .txt file
-      delData(files[i]) #remove entry from db
+    for i in 0..high(files)
+      removeFile(files[i]) # Removes the actual .txt file
+      delData(files[i]) # remove entry from database
     echo "Removed files."
   else:
     echo "No files removed."
-  
-#  if(file):
-#  	removeFile(file)
-#  	quit()
-    
+
 ###            ###
 ### Procedures ###
 ###            ###
@@ -133,11 +131,10 @@ proc inData(name:string = "nil"): bool =
   else:
     return false
 
-proc delData(name:string = "nil"): void =
-  #remove a given row from db
-  #used by clear proc
+proc delData(name:string ="nil"): void =
+  # This procedure will remove a given row from the database. 
+  # Used by the clear procedure
   db.exec(sql"DELETE FROM meta WHERE name = ?", name)
-
 
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
@@ -185,7 +182,7 @@ proc main(): void =
         k = i+1
         file = noteFile(arguments[k])
         filename = arguments[k]
-
+        
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
@@ -210,6 +207,9 @@ proc main(): void =
   if(not inData(filename)):
     insertData(filename)
       
+  if(not inData(filename)):
+    insertData(filename)
+                
   message.add("\n")
   message.add("----------------------------")
   writeMess(message)
