@@ -51,6 +51,8 @@ proc help(): void =
   writeStyled "2. -t To append time to the top of the note\n"
   writeStyled "3. -f For specifying a note txt file\n"
   writeStyled "4. -c To remove notes.txt\n"
+  writeStyled "5. -l Lists all files written to in db\n"
+  writeStyled "6. -p For printing contents of note file\n"
   resetAttributes()
   stdout.write "\n"
   quit()
