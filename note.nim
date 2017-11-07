@@ -11,12 +11,14 @@
 ### Imports ###
 ###         ###
 
-import strutils, osproc, os, times, terminal, sequtils, db_sqlite, typetraits
+import 
+  strutils, osproc, os, times,
+  terminal, sequtils, db_sqlite, typetraits
 
 ### Variables ###
 var
   file: File
-  message: string = ""
+  message = ""
 
 ### Databse Setup ###
 var exist = 0
@@ -28,6 +30,9 @@ let db = open("metadata.db", nil, nil, nil)
 ### Types ###
 type
   argError* = object of Exception
+
+### prototype ###
+proc delData(name:string ="nil"): void
 
 ###       ###
 ### Flags ###
@@ -63,15 +68,12 @@ proc clear(files: seq = @["notes.txt"]): void =
   var ans = readLine(stdin)
   if(ans == "y"):
     for i in 0..high(files):
-      removeFile(files[i])
+      removeFile(files[i]) # Removes the actual .txt file
+      delData(files[i]) # remove entry from database
     echo "Removed files."
   else:
     echo "No files removed."
-  
-#  if(file):
-#  	removeFile(file)
-#  	quit()
-    
+
 ###            ###
 ### Procedures ###
 ###            ###
@@ -111,6 +113,11 @@ proc inData(name:string = "nil"): bool =
     return true
   else:
     return false
+
+proc delData(name:string ="nil"): void =
+  # This procedure will remove a given row from the database. 
+  # Used by the clear procedure
+  db.exec(sql"DELETE FROM meta WHERE name = ?", name)
 
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
