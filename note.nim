@@ -56,6 +56,8 @@ proc help(): void =
   writeStyled "2. -t To append time to the top of the note\n"
   writeStyled "3. -f For specifying a note txt file\n"
   writeStyled "4. -c To remove notes.txt\n"
+  writeStyled "5. -l Lists all files written to in db\n"
+  writeStyled "6. -p For printing contents of note file\n"
   resetAttributes()
   stdout.write "\n"
   quit()
@@ -67,7 +69,7 @@ proc clear(files: seq = @["notes.txt"]): void =
   echo "\nPlease enter y or n."
   var ans = readLine(stdin)
   if(ans == "y"):
-    for i in 0..high(files):
+    for i in 0..high(files)
       removeFile(files[i]) # Removes the actual .txt file
       delData(files[i]) # remove entry from database
     echo "Removed files."
@@ -91,6 +93,21 @@ proc createTable(): void =
   db.exec(sql"""CREATE TABLE meta (
   	            name string,
   	            date string)""")
+
+proc getNum(): int =
+  var num = 0
+  var data = @[""]
+  data.delete(0)
+  for x in db.rows(sql"SELECT * FROM meta"):
+    data.add(x[0])
+
+  for y in 0..(high(data)):
+    if(num < cast[int](data[y])):
+      num = cast[int](data[y])
+
+  return num
+
+      
 
 proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
@@ -130,6 +147,17 @@ proc writeMess(message: string): void =
   file.writeLine(message)
   file.close()
 
+proc print_db(filename = "metadata.db"): void =
+  #prints out names of all storage files
+  var data = getData()
+  for i in 0..(high(data)):
+    echo data[i] 
+
+proc print_file(filename: string): void =
+  #cats from file name
+  for line in lines filename:
+    echo line
+
 proc main(): void =
   # Main will do the heavy lifting of the program, as usual, tying everything
   # else in the program together.
@@ -161,7 +189,13 @@ proc main(): void =
         
       elif(arguments[i] == "-t"): # time append
         head()
-        
+      
+      elif(arguments[i] == "-l"): # Print from SQL
+        print_db()
+      
+      elif(arguments[i] == "-p"): # Print File Contents
+        print_file(arguments[i+1])
+ 
       else:
         # throw error hcdere
         raise newException(argError, "Argument not recognized.")
@@ -169,6 +203,9 @@ proc main(): void =
     else:
       message.add(arguments[i])
       message.add(" ")
+
+  if(not inData(filename)):
+    insertData(filename)
       
   if(not inData(filename)):
     insertData(filename)

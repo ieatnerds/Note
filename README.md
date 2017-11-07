@@ -33,3 +33,10 @@ is sure they wish to remove files.
 `note -h`
 This simply opens the help menu, which really is just a few printed statements
 on the flags that can be used in the program.
+
+
+`./note -l`
+Simply lists all notes created that are stored in the db
+
+`./note -p [filename]`
+Prints the contents of a specified file
