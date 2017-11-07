@@ -90,6 +90,21 @@ proc createTable(): void =
   	            name string,
   	            date string)""")
 
+proc getNum(): int =
+  var num = 0
+  var data = @[""]
+  data.delete(0)
+  for x in db.rows(sql"SELECT * FROM meta"):
+    data.add(x[0])
+
+  for y in 0..(high(data)):
+    if(num < cast[int](data[y])):
+      num = cast[int](data[y])
+
+  return num
+
+      
+
 proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
   var date = getDateStr()
@@ -123,6 +138,16 @@ proc writeMess(message: string): void =
   file.writeLine(message)
   file.close()
 
+proc print_db(filename = "metadata.db"): void =
+  var data = getData()
+  for i in 0..(high(data)):
+    echo data[i] 
+
+proc print_file(filename: string): void =
+  #cats from file name
+  for line in lines filename:
+    echo line
+
 proc main(): void =
   # Main will do the heavy lifting of the program, as usual, tying everything
   # else in the program together.
@@ -155,7 +180,13 @@ proc main(): void =
         
       elif(arguments[i] == "-t"): # time append
         head()
-        
+      
+      elif(arguments[i] == "-l"): # Print from SQL
+        print_db()
+      
+      elif(arguments[i] == "-p"):
+        print_file(arguments[i+1])
+ 
       else:
         # throw error hcdere
         raise newException(argError, "Argument not recognized.")
