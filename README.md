@@ -29,8 +29,8 @@ This simply opens the help menu, which really is just a few printed statements
 on the flags that can be used in the program.
 
 
-'./note -l'
+`./note -l`
 Simply lists all notes created that are stored in the db
 
-'./note -p [filename]'
+`./note -p [filename]`
 Prints the contents of a specified file
