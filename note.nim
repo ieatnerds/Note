@@ -69,7 +69,7 @@ proc clear(files: seq = @["notes.txt"]): void =
   echo "\nPlease enter y or n."
   var ans = readLine(stdin)
   if(ans == "y"):
-    for i in 0..high(files)
+    for i in 0..high(files):
       removeFile(files[i]) # Removes the actual .txt file
       delData(files[i]) # remove entry from database
     echo "Removed files."
@@ -106,8 +106,6 @@ proc getNum(): int =
       num = cast[int](data[y])
 
   return num
-
-      
 
 proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
