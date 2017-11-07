@@ -6,6 +6,9 @@ First have nim installed. and open the note folder inside of a terminal,
  then run the following command.
 `nim c -d:release note.nim`
 
+Or you can run the install.sh script to compile note.nim and copy the
+executable into /usr/local/bin
+
 ## Examples
 
 Currently as we don't install to any path ./ in the note directory is
