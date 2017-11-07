@@ -11,7 +11,7 @@
 ### Imports ###
 ###         ###
 
-import strutils, osproc, os, times, terminal, sequtils, db_sqlite
+import strutils, osproc, os, times, terminal, sequtils, db_sqlite, typetraits
 
 ### Variables ###
 var
@@ -56,8 +56,10 @@ proc help(): void =
   quit()
 
 proc clear(file: string = "notes.txt"): void =
-  removeFile(file)
-  quit()
+  echo ""
+#  if(file):
+#  	removeFile(file)
+#  	quit()
     
 ###            ###
 ### Procedures ###
@@ -80,17 +82,13 @@ proc createTable(): void =
 proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
   var date = getDateStr()
-  db.exec(sql"BEGIN")
-  db.exec(sql"INSERT INTO meta (name, date) VALUES(?, ?)", name, date)
-  db.exec(sql"COMMIT")
+  db.exec(sql"INSERT INTO meta (name, date) VALUES (?, ?)", name, date)
 
 proc getData(): string =
   # This will return the names on all entries in the meta table
   var data: string
-  echo "start"
   for x in db.rows(sql"SELECT * FROM meta"):
     echo x
-  echo "end"
   return data
 
 proc inData(Name:string = "nil"): bool =
@@ -126,7 +124,9 @@ proc main(): void =
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
-        clear()
+        var data = getData()
+        echo data.type.name
+        clear(data)
       elif(arguments[i] == "-h"): # Help
         help()
       elif(arguments[i] == "-f"): # File
@@ -134,6 +134,7 @@ proc main(): void =
         file = noteFile(arguments[k])
         if(not inData(arguments[k])):
           insertData(arguments[k])
+          echo "successfully inserted data"
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
@@ -149,12 +150,10 @@ proc main(): void =
   message.add("\n")
   message.add("----------------------------")
   writeMess(message)
+  db.close
 
 ###      ###
 ### Main ###
 ###      ###
 
 main()
-var luck = getData()
-echo luck
-db.close()
