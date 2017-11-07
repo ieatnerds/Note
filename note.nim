@@ -56,9 +56,10 @@ proc help(): void =
   quit()
 
 proc clear(files: seq = @["notes.txt"]): void =
-  echo "Would you like to remove the following?:\n"
-  echo files
-  echo "\n\nPlease enter y or n."
+  echo "Would you like to remove the following?:"
+  for i in 0..high(files):
+    echo files[i]
+  echo "\nPlease enter y or n."
   var ans = readLine(stdin)
   if(ans == "y"):
     for i in 0..high(files):
