@@ -94,6 +94,7 @@ proc getData(): string =
 proc inData(Name:string = "nil"): bool =
   # This will be used to check if a name is already in the database
   # This will return true upon success and false upon failure
+  echo Name
   try:
     db.exec(sql"SELECT name FROM meta WHERE name = ?", Name)
     return true
@@ -132,9 +133,9 @@ proc main(): void =
       elif(arguments[i] == "-f"): # File
         k = i+1
         file = noteFile(arguments[k])
-        if(not inData(arguments[k])):
+        if(inData(arguments[k]) == false):
           insertData(arguments[k])
-          echo "successfully inserted data"
+          echo "successfully inserted details"
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
