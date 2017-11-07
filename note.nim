@@ -55,8 +55,18 @@ proc help(): void =
   stdout.write "\n"
   quit()
 
-proc clear(file: string = "notes.txt"): void =
-  echo ""
+proc clear(files: seq = @["notes.txt"]): void =
+  echo "Would you like to remove the following?:\n"
+  echo files
+  echo "\n\nPlease enter y or n."
+  var ans = readLine(stdin)
+  if(ans == "y"):
+    for i in 0..high(files):
+      removeFile(files[i])
+    echo "Removed files."
+  else:
+    echo "No files removed."
+  
 #  if(file):
 #  	removeFile(file)
 #  	quit()
@@ -84,11 +94,12 @@ proc insertData(name:string = "nil"): void =
   var date = getDateStr()
   db.exec(sql"INSERT INTO meta (name, date) VALUES (?, ?)", name, date)
 
-proc getData(): string =
+proc getData(): seq =
   # This will return the names on all entries in the meta table
-  var data: string
+  var data = @[""]
+  data.delete(0)
   for x in db.rows(sql"SELECT * FROM meta"):
-    echo x
+    data.add(x[0])
   return data
 
 proc inData(name:string = "nil"): bool =
@@ -125,23 +136,29 @@ proc main(): void =
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
         var data = getData()
-        echo data.type.name
         clear(data)
+        
       elif(arguments[i] == "-h"): # Help
         help()
+        
       elif(arguments[i] == "-f"): # File
         k = i+1
         file = noteFile(arguments[k])
+        
         if(not inData(arguments[k])):
           insertData(arguments[k])
+          
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
+        
       elif(arguments[i] == "-t"): # time append
         head()
+        
       else:
         # throw error hcdere
         raise newException(argError, "Argument not recognized.")
+        
     else:
       message.add(arguments[i])
       message.add(" ")
