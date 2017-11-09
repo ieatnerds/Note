@@ -17,11 +17,13 @@ import
 
 ### Constants ###
 const location = "/var/data/Note/"
+# const currdur = getCurrentDir()
 
 ### Variables ###
 var
   file: File
   message = ""
+  currDur = getCurrentDir()&"/"
 
 ### Databse Setup ###
 var exist = 0
@@ -165,7 +167,7 @@ proc main(): void =
   var
     arguments = commandLineParams()
     k = 0
-    filename = "notes.txt"
+    filename = currDur&"notes.txt"
   file = noteFile()
   if(exist != 1):
     createTable()
@@ -181,8 +183,8 @@ proc main(): void =
         
       elif(arguments[i] == "-f"): # File
         k = i+1
-        file = noteFile(arguments[k])
-        filename = arguments[k]
+        file = noteFile(currDur&arguments[k])
+        filename = currDur&arguments[k]
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
