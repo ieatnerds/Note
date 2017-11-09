@@ -7,7 +7,15 @@ First have nim installed. and open the note folder inside of a terminal,
 `nim c -d:release note.nim`
 
 Or you can run the install.sh script to compile note.nim and copy the
-executable into /usr/local/bin
+executable into /usr/local/bin. This requires sudo or root execution.
+
+A windows installer is in the works.
+
+### Uninstall
+
+I've made a quick uninstall.sh for th note program that removes our folder
+and removes the executable from the /usr/local/bin folder. This also requires
+sudo.
 
 ## Examples
 
