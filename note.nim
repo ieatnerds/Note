@@ -15,6 +15,9 @@ import
   strutils, osproc, os, times,
   terminal, sequtils, db_sqlite, typetraits
 
+### Constants ###
+const location = "/var/data/Note/"
+
 ### Variables ###
 var
   file: File
@@ -22,10 +25,10 @@ var
 
 ### Databse Setup ###
 var exist = 0
-if(fileExists("metadata.db")):
+if(fileExists(location&"metadata.db")):
   exist = 1
 
-let db = open("metadata.db", nil, nil, nil)
+let db = open(location&"metadata.db", nil, nil, nil)
 
 ### Types ###
 type
@@ -145,7 +148,7 @@ proc writeMess(message: string): void =
   file.writeLine(message)
   file.close()
 
-proc print_db(filename = "metadata.db"): void =
+proc print_db(filename = location&"metadata.db"): void =
   #prints out names of all storage files
   var data = getData()
   for i in 0..(high(data)):
@@ -180,7 +183,6 @@ proc main(): void =
         k = i+1
         file = noteFile(arguments[k])
         filename = arguments[k]
-        
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
