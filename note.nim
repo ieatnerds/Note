@@ -15,17 +15,22 @@ import
   strutils, osproc, os, times,
   terminal, sequtils, db_sqlite, typetraits
 
+### Constants ###
+const location = "/var/data/Note/"
+# const currdur = getCurrentDir()
+
 ### Variables ###
 var
   file: File
   message = ""
+  currDur = getCurrentDir()&"/"
 
 ### Databse Setup ###
 var exist = 0
-if(fileExists("metadata.db")):
+if(fileExists(location&"metadata.db")):
   exist = 1
 
-let db = open("metadata.db", nil, nil, nil)
+let db = open(location&"metadata.db", nil, nil, nil)
 
 ### Types ###
 type
@@ -69,7 +74,7 @@ proc clear(files: seq = @["notes.txt"]): void =
   echo "\nPlease enter y or n."
   var ans = readLine(stdin)
   if(ans == "y"):
-    for i in 0..high(files)
+    for i in 0..high(files):
       removeFile(files[i]) # Removes the actual .txt file
       delData(files[i]) # remove entry from database
     echo "Removed files."
@@ -106,8 +111,6 @@ proc getNum(): int =
       num = cast[int](data[y])
 
   return num
-
-      
 
 proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
@@ -147,7 +150,7 @@ proc writeMess(message: string): void =
   file.writeLine(message)
   file.close()
 
-proc print_db(filename = "metadata.db"): void =
+proc print_db(filename = location&"metadata.db"): void =
   #prints out names of all storage files
   var data = getData()
   for i in 0..(high(data)):
@@ -164,7 +167,7 @@ proc main(): void =
   var
     arguments = commandLineParams()
     k = 0
-    filename = "notes.txt"
+    filename = currDur&"notes.txt"
   file = noteFile()
   if(exist != 1):
     createTable()
@@ -180,9 +183,8 @@ proc main(): void =
         
       elif(arguments[i] == "-f"): # File
         k = i+1
-        file = noteFile(arguments[k])
-        filename = arguments[k]
-        
+        file = noteFile(currDur&arguments[k])
+        filename = currDur&arguments[k]
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
