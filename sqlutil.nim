@@ -1,7 +1,7 @@
 # Utility file for sql database interactions.
 import db_sqlite, sequtils, os, osproc, times
 
-include logutil
+include logutil # drags util with it
 
 
 # Database dirLoc
@@ -39,7 +39,7 @@ proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
   var date = getDateStr()
   db.exec(sql"INSERT INTO meta (name, date) VALUES (?, ?)", name, date)
-  info("Inserted data into table")
+  info("Inserted data:", name, " into table")
 
 proc getData(): seq =
   # This will return the names on all entries in the meta table
@@ -62,7 +62,7 @@ proc delData(name:string ="nil"): void =
   # This procedure will remove a given row from the database. 
   # Used by the clear procedure
   db.exec(sql"DELETE FROM meta WHERE name = ?", name)
-  info("Removed data from database.")
+  info("Removed data:", name, " from database.")
 
 proc print_db(filename = dirLoc&"metadata.db"): void =
   #prints out names of all storage files

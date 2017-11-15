@@ -68,11 +68,11 @@ proc clear(files: seq = @["notes.txt"]): void =
     for i in 0..high(files):
       removeFile(files[i]) # Removes the actual .txt file
       delData(files[i]) # remove entry from database
-    info("Files were removed.")
+      info("File:", files[i], " was removed.")
     echo "Removed files."
   else:
     info("No files were removed.")
-    echo "No files removed."
+    echo "No files were removed."
 
 ###            ###
 ### Procedures ###
@@ -87,7 +87,7 @@ proc isArg(arg: string): bool =
     
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
-  info("Note file was opened.")
+  info("Note file:", filename, " was opened.")
   open(filename, fmAppend)
     
 proc writeMess(message: string): void =
