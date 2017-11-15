@@ -15,14 +15,13 @@ import
   strutils, osproc, os, times,
   terminal, sequtils, db_sqlite, typetraits
 
-include sqlutil
+include sqlutil # Also drags logutil and util with it
 
 ### Variables ###
 var
   file: File
   message = ""
   currDur = getCurrentDir()&"/"
-
 
 ### Types ###
 type
@@ -38,6 +37,7 @@ proc head(): void =
   message.add("-->")
   message.add(getClockStr())
   message.add("\n")
+  info("Appended time to message.")
 
 proc help(): void =
   # This flag will display help options to the console when used.
@@ -54,9 +54,11 @@ proc help(): void =
   writeStyled "6. -p For printing contents of note file\n"
   resetAttributes()
   stdout.write "\n"
+  info("Help menu accessed")
   quit()
 
 proc clear(files: seq = @["notes.txt"]): void =
+  info("Clear files was called.")
   echo "Would you like to remove the following?:"
   for i in 0..high(files):
     echo files[i]
@@ -66,8 +68,10 @@ proc clear(files: seq = @["notes.txt"]): void =
     for i in 0..high(files):
       removeFile(files[i]) # Removes the actual .txt file
       delData(files[i]) # remove entry from database
+    info("Files were removed.")
     echo "Removed files."
   else:
+    info("No files were removed.")
     echo "No files removed."
 
 ###            ###
@@ -81,10 +85,9 @@ proc isArg(arg: string): bool =
   else:
     return false
     
-
-
 proc noteFile(filename = "notes.txt"): File =
   # Used to specify the file to save notes into
+  info("Note file was opened.")
   open(filename, fmAppend)
     
 proc writeMess(message: string): void =
@@ -93,6 +96,7 @@ proc writeMess(message: string): void =
   # be kept open when we are no longer using it.
   file.writeLine(message)
   file.close()
+  info("Note file was written to.")
 
 proc print_file(filename: string): void =
   #cats from file name

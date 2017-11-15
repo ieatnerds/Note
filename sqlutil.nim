@@ -1,24 +1,24 @@
 # Utility file for sql database interactions.
 import db_sqlite, sequtils, os, osproc, times
 
+include logutil
 
-# Database location
-when defined windows:
-  const location = "C:/somewhere/over/the/rainbow"
-else:
-  const location = "/var/data/Note/"
+
+# Database dirLoc
 
 ### Databse Setup ###
 var exist = 0
-if(fileExists(location&"metadata.db")):
+if(fileExists(dirLoc&"metadata.db")):
   exist = 1
 
-let db = open(location&"metadata.db", nil, nil, nil)
+let db = open(dirLoc&"metadata.db", nil, nil, nil)
+info("Opened sql database.")
 
 ### Procedures
 proc createTable(): void =
   # This will be used to create the metadata table if it is not
   # already present in the database
+  info("Created table.")
   db.exec(sql"""CREATE TABLE meta (
   	            name string,
   	            date string)""")
@@ -39,6 +39,7 @@ proc insertData(name:string = "nil"): void =
   # Used to insert a new note file name into the database
   var date = getDateStr()
   db.exec(sql"INSERT INTO meta (name, date) VALUES (?, ?)", name, date)
+  info("Inserted data into table")
 
 proc getData(): seq =
   # This will return the names on all entries in the meta table
@@ -61,8 +62,9 @@ proc delData(name:string ="nil"): void =
   # This procedure will remove a given row from the database. 
   # Used by the clear procedure
   db.exec(sql"DELETE FROM meta WHERE name = ?", name)
+  info("Removed data from database.")
 
-proc print_db(filename = location&"metadata.db"): void =
+proc print_db(filename = dirLoc&"metadata.db"): void =
   #prints out names of all storage files
   var data = getData()
   for i in 0..(high(data)):
