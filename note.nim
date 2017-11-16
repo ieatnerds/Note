@@ -75,19 +75,21 @@ proc isArg(arg: string): bool =
     return false
 
 # TODO rewrite to add data to note table
-proc writeMess(message: string): void =
+proc writeMess(table:string, message:string): void =
   # This procedure will write a give message to the open file 
   # and then it will close the file, assuming that the file should not 
   # be kept open when we are no longer using it.
-  file.writeLine(message)
-  file.close()
-  info("Note table:", , " was written to.")
+  insertData(table, message)
+  info("Note table:", table, " was written to.")
 
 # TODO rewrite to print from note table
-proc print_file(filename: string): void =
+proc printTable(table:string): void =
   #cats from file name
-  for line in lines filename:
-    echo line
+  var info = @[""]
+  info = getnote(table)
+  for x in info:
+    for y in 0..len(x):
+      echo(x[y])
 
 proc main(): void =
   # Main will do the heavy lifting of the program, as usual, tying everything
@@ -96,40 +98,59 @@ proc main(): void =
     arguments = commandLineParams()
     k = 0
     table_name = currDur
+    nice_name = ""
+  if(not exist):
+    createMeta()
     
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
+        notice("Argument clear called")
         # TODO fucking make this good...
-        var data = nil
-        clear(data)
+        discard 0
         
       elif(arguments[i] == "-h"): # Help
+        notice("argument help called")
         help()
         
-      elif(arguments[i] == "-f"): # File
+      elif(arguments[i] == "-t"): # table
+        notice("argument table called")
         k = i+1
         table_name = table_name&arguments[k]
+        nice_name = nicename&arguments[k]
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
       else:
+        notice("No table specified")
         table_name = table_name&"notes"
         
       if(arguments[i] == "-l"): # Print from SQL
+        notice("print from sql called")
         print_db()
       
-      elif(arguments[i] == "-p"): # Print File Contents
-        print_file(arguments[i+1])
+      elif(arguments[i] == "-r"): # read table Contents
+        notice("argument read called")
+        k = i+1
+        var name = table_name&arguments[k]
+        printTable(name)
+        quit()
+
  
       else:
         # throw error hcdere
+        notice("unrecognized argument")
         raise newException(argError, "Argument not recognized.")
-        
+
+      createNote(table_name)
+      insertMeta(table_name, nice_name)
+
     else:
+      notice("adding to message")
       message.add(arguments[i])
       message.add(" ")
 
+  notice("calling write message in main")
   writeMess(table_name, message)
   db.close
 

@@ -7,9 +7,9 @@ include logutil # drags util with it
 # Database dirLoc
 
 ### Databse Setup ###
-var exist = 0
+var exist = false
 if(fileExists(dirLoc&"metadata.db")):
-  exist = 1
+  exist = true
 
 let db = open(dirLoc&"metadata.db", nil, nil, nil)
 info("Opened sql database.")
@@ -19,13 +19,13 @@ proc createTable(name:string = "meta"): void =
   # This will be used to create a given table in the database
   # any columns that need to be added can be added in its own
   # procedure using the alter table command
+  
+  db.exec(sql"CREATE TABLE IF NOT EXISTS ? (id INTEGER PRIMARY KEY)", name)
   info("Created table:", name)
-  db.exec(sql"CREATE TABLE IF NOT EXISTS ? ()", name)
 
 proc createMeta(): void =
   # this procedure will create the main "meta" table.
   createTable()
-  db.exec(sql"ALTER TABLE meta ADD COLUMN id INTEGER PRIMARY KEY")
   db.exec(sql"ALTER TABLE meta ADD COLUMN table_name STRING")
   db.exec(sql"ALTER TABLE meta ADD COLUMN nice_name STRING")
   db.exec(sql"ALTER TABLE meta ADD COLUMN last_edit STRING")
@@ -34,7 +34,6 @@ proc createMeta(): void =
 
 proc createNote(name: string): void =
   createTable(name)
-  db.exec(sql"ALTER TABLE ? ADD COLUMN id INTEGER PRIMARY KEY", name)
   db.exec(sql"ALTER TABLE ? ADD COLUMN date STRING", name)
   db.exec(sql"ALTER TABLE ? ADD COLUMN note STRING", name)
   db.exec(sql"ALTER TABLE ? ADD COLUMN tags STRING", name)
@@ -71,10 +70,10 @@ proc getmeta(table:string): seq =
     data.add(x)
   return data
 
-proc getnote(table:seq): seq =
+proc getnote(table:string): seq =
   var data = @[""]
   data.delete(0)
-  for x in db.rows(sql"SELECT * FROM ?", table[0]):
+  for x in db.rows(sql"SELECT * FROM ?", table):
     data.add(x)
   info("Retrieved notes from table:", table)
   return data
