@@ -80,6 +80,7 @@ proc writeMess(table:string, message:string): void =
   # and then it will close the file, assuming that the file should not 
   # be kept open when we are no longer using it.
   notice("Calling insertData")
+  echo table, message
   insertData(table, message)
   info("Note table:", table, " was written to.")
 
@@ -89,8 +90,7 @@ proc printTable(table:string): void =
   var info = @[""]
   info = getnote(table)
   for x in info:
-    for y in 0..len(x):
-      echo(x[y])
+    echo x
 
 proc main(): void =
   # Main will do the heavy lifting of the program, as usual, tying everything
@@ -128,19 +128,22 @@ proc main(): void =
         print_db()
       
       elif(arguments[i] == "-r"): # read table Contents
+        var name: string
         notice("argument read called")
-        k = i+1
-        var name = table_name&arguments[k]
+        if(k+1 >= len(arguments)):
+          notice("no table specified for read")
+          name = table_name&"notes"
+        else:
+          name = table_name&arguments[k+1]
+          notice("reading table:", name)
+
         printTable(name)
         quit()
 
- 
       else:
         # throw error hcdere
         notice("unrecognized argument")
         raise newException(argError, "Argument not recognized.")
-
-      
 
     else:
       notice("adding to message")

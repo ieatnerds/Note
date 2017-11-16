@@ -34,10 +34,10 @@ proc createMeta(): void =
 
 proc createNote(table: string): void =
   var name = replace(table, currDur, "")
-  createTable(name)
-  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN date STRING", name)
-  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN note STRING", name)
-  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN tags STRING", name)
+  createTable(table)
+  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN date STRING", table)
+  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN note STRING", table)
+  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN tags STRING", table)
 
 proc getNum(): int =
   var num = 0
@@ -62,7 +62,8 @@ proc insertData(table:string, note:string, tags:string = nil): void =
   # Used to insert data into a note table
   var date = getDateStr()
   var name = replace(table, currDur, "")
-  db.exec(sql"INSERT INTO ? (date, note, tags) VALUES (?, ?, ?)", name, note, date)
+  echo table, " ", name
+  db.exec(sql"INSERT INTO ? (date, note, tags) VALUES (?, ?, ?)", table, date, note, tags)
   info("Inserted data:", note, " into", table)
 
 proc getmeta(table:string): seq =
