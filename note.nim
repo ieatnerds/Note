@@ -141,7 +141,7 @@ proc main(): void =
         quit()
 
       else:
-        # throw error hcdere
+        # throw error here
         notice("unrecognized argument")
         raise newException(argError, "Argument not recognized.")
 
