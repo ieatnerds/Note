@@ -79,6 +79,7 @@ proc writeMess(table:string, message:string): void =
   # This procedure will write a give message to the open file 
   # and then it will close the file, assuming that the file should not 
   # be kept open when we are no longer using it.
+  notice("Calling insertData")
   insertData(table, message)
   info("Note table:", table, " was written to.")
 
@@ -121,11 +122,8 @@ proc main(): void =
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
-      else:
-        notice("No table specified")
-        table_name = table_name&"notes"
         
-      if(arguments[i] == "-l"): # Print from SQL
+      elif(arguments[i] == "-l"): # Print from SQL
         notice("print from sql called")
         print_db()
       
@@ -142,15 +140,22 @@ proc main(): void =
         notice("unrecognized argument")
         raise newException(argError, "Argument not recognized.")
 
-      createNote(table_name)
-      insertMeta(table_name, nice_name)
+      
 
     else:
       notice("adding to message")
       message.add(arguments[i])
       message.add(" ")
+  
+  if(table_name == currDur):
+    notice("No table specified. setting to default")
+    table_name = table_name&"notes"
+    nice_name = "notes"
 
-  notice("calling write message in main")
+  createNote(table_name)
+  insertMeta(table_name, nice_name)
+
+  notice("calling write message in main with table:",table_name, "and note", message)
   writeMess(table_name, message)
   db.close
 

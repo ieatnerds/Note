@@ -1,5 +1,5 @@
 # Utility file for sql database interactions.
-import db_sqlite, sequtils, os, osproc, times
+import db_sqlite, sequtils, os, osproc, times, strutils
 
 include logutil # drags util with it
 
@@ -32,11 +32,12 @@ proc createMeta(): void =
   db.exec(sql"ALTER TABLE meta ADD COLUMN full_path STRING")
   db.exec(sql"ALTER TABLE meta ADD COLUMN tags STRING")
 
-proc createNote(name: string): void =
+proc createNote(table: string): void =
+  var name = replace(table, currDur, "")
   createTable(name)
-  db.exec(sql"ALTER TABLE ? ADD COLUMN date STRING", name)
-  db.exec(sql"ALTER TABLE ? ADD COLUMN note STRING", name)
-  db.exec(sql"ALTER TABLE ? ADD COLUMN tags STRING", name)
+  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN date STRING", name)
+  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN note STRING", name)
+  discard db.tryExec(sql"ALTER TABLE ? ADD COLUMN tags STRING", name)
 
 proc getNum(): int =
   var num = 0
@@ -54,13 +55,14 @@ proc insertMeta(name:string, nice_name:string, tags:string = nil): void =
   # used to insert data into the meta table
   # nice name should be named like 'notes' or 'misc'
   var date = getDateStr()
-  db.exec(sql"INSERT INTO meta (table_name, nice_name, last_Edit, fullpath, tags) VALUES(?,?,?,?,?)", name, nice_name, date, currdur, tags)
+  db.exec(sql"INSERT INTO meta (table_name, nice_name, last_Edit, full_path, tags) VALUES(?,?,?,?,?)", name, nice_name, date, currdur, tags)
   info("Inserted data:", currdur&nice_name, " into meta")
 
 proc insertData(table:string, note:string, tags:string = nil): void =
   # Used to insert data into a note table
   var date = getDateStr()
-  db.exec(sql"INSERT INTO ? (date, note, tag) VALUES (?, ?, ?)", date, note, date)
+  var name = replace(table, currDur, "")
+  db.exec(sql"INSERT INTO ? (date, note, tags) VALUES (?, ?, ?)", name, note, date)
   info("Inserted data:", note, " into", table)
 
 proc getmeta(table:string): seq =
