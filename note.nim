@@ -21,7 +21,6 @@ include sqlutil # Also drags logutil and util with it
 var
   file: File
   message = ""
-  currDur = getCurrentDir()&"/"
 
 ### Types ###
 type
@@ -31,14 +30,6 @@ type
 ### Flags ###
 ###       ###
 
-proc head(): void =
-  # Append date to head of message
-  message = getDateStr()
-  message.add("-->")
-  message.add(getClockStr())
-  message.add("\n")
-  info("Appended time to message.")
-
 proc help(): void =
   # This flag will display help options to the console when used.
   setForegroundColor(fgBlue)
@@ -47,17 +38,16 @@ proc help(): void =
   stdout.write "More coming soon!\n"
   stdout.write "The current arguments for this program include\n"
   writeStyled "1. -h For the help menu\n"
-  writeStyled "2. -t To append time to the top of the note\n"
-  writeStyled "3. -f For specifying a note txt file\n"
-  writeStyled "4. -c To remove notes.txt\n"
-  writeStyled "5. -l Lists all files written to in db\n"
-  writeStyled "6. -p For printing contents of note file\n"
+  writeStyled "2. -t For specifying a note table\n"
+  writeStyled "3. -c To remove notes.txt\n"
+  writeStyled "4. -l Lists all files written to in db\n"
+  writeStyled "5. -p For printing contents of note file\n"
   resetAttributes()
   stdout.write "\n"
   info("Help menu accessed")
   quit()
 
-proc clear(files: seq = @["notes.txt"]): void =
+proc clear(files: seq = @["notes"]): void =
   info("Clear files was called.")
   echo "Would you like to remove the following?:"
   for i in 0..high(files):
@@ -66,9 +56,8 @@ proc clear(files: seq = @["notes.txt"]): void =
   var ans = readLine(stdin)
   if(ans == "y"):
     for i in 0..high(files):
-      removeFile(files[i]) # Removes the actual .txt file
-      delData(files[i]) # remove entry from database
-      info("File:", files[i], " was removed.")
+      delData(files[i]) # Removes the actual .txt file
+      delmeta(files[i]) # remove entry from database
     echo "Removed files."
   else:
     info("No files were removed.")
@@ -84,20 +73,17 @@ proc isArg(arg: string): bool =
     return true
   else:
     return false
-    
-proc noteFile(filename = "notes.txt"): File =
-  # Used to specify the file to save notes into
-  info("Note file:", filename, " was opened.")
-  open(filename, fmAppend)
-    
+
+# TODO rewrite to add data to note table
 proc writeMess(message: string): void =
   # This procedure will write a give message to the open file 
   # and then it will close the file, assuming that the file should not 
   # be kept open when we are no longer using it.
   file.writeLine(message)
   file.close()
-  info("Note file was written to.")
+  info("Note table:", , " was written to.")
 
+# TODO rewrite to print from note table
 proc print_file(filename: string): void =
   #cats from file name
   for line in lines filename:
@@ -109,15 +95,13 @@ proc main(): void =
   var
     arguments = commandLineParams()
     k = 0
-    filename = currDur&"notes.txt"
-  file = noteFile()
-  if(exist != 1):
-    createTable()
+    table_name = currDur
     
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
-        var data = getData()
+        # TODO fucking make this good...
+        var data = nil
         clear(data)
         
       elif(arguments[i] == "-h"): # Help
@@ -125,16 +109,14 @@ proc main(): void =
         
       elif(arguments[i] == "-f"): # File
         k = i+1
-        file = noteFile(currDur&arguments[k])
-        filename = currDur&arguments[k]
+        table_name = table_name&arguments[k]
         arguments[k] = "" # Preserves list length
         # arguments.delete(k)
         # arguments.add("")
+      else:
+        table_name = table_name&"notes"
         
-      elif(arguments[i] == "-t"): # time append
-        head()
-      
-      elif(arguments[i] == "-l"): # Print from SQL
+      if(arguments[i] == "-l"): # Print from SQL
         print_db()
       
       elif(arguments[i] == "-p"): # Print File Contents
@@ -148,15 +130,7 @@ proc main(): void =
       message.add(arguments[i])
       message.add(" ")
 
-  if(not inData(filename)):
-    insertData(filename)
-      
-  if(not inData(filename)):
-    insertData(filename)
-                
-  message.add("\n")
-  message.add("----------------------------")
-  writeMess(message)
+  writeMess(table_name, message)
   db.close
 
 ###      ###

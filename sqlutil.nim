@@ -15,13 +15,29 @@ let db = open(dirLoc&"metadata.db", nil, nil, nil)
 info("Opened sql database.")
 
 ### Procedures
-proc createTable(): void =
-  # This will be used to create the metadata table if it is not
-  # already present in the database
-  info("Created table.")
-  db.exec(sql"""CREATE TABLE meta (
-  	            name string,
-  	            date string)""")
+proc createTable(name:string = "meta"): void =
+  # This will be used to create a given table in the database
+  # any columns that need to be added can be added in its own
+  # procedure using the alter table command
+  info("Created table:", name)
+  db.exec(sql"CREATE TABLE IF NOT EXISTS ? ()", name)
+
+proc createMeta(): void =
+  # this procedure will create the main "meta" table.
+  createTable()
+  db.exec(sql"ALTER TABLE meta ADD COLUMN id INTEGER PRIMARY KEY")
+  db.exec(sql"ALTER TABLE meta ADD COLUMN table_name STRING")
+  db.exec(sql"ALTER TABLE meta ADD COLUMN nice_name STRING")
+  db.exec(sql"ALTER TABLE meta ADD COLUMN last_edit STRING")
+  db.exec(sql"ALTER TABLE meta ADD COLUMN full_path STRING")
+  db.exec(sql"ALTER TABLE meta ADD COLUMN tags STRING")
+
+proc createNote(name: string): void =
+  createTable(name)
+  db.exec(sql"ALTER TABLE ? ADD COLUMN id INTEGER PRIMARY KEY", name)
+  db.exec(sql"ALTER TABLE ? ADD COLUMN date STRING", name)
+  db.exec(sql"ALTER TABLE ? ADD COLUMN note STRING", name)
+  db.exec(sql"ALTER TABLE ? ADD COLUMN tags STRING", name)
 
 proc getNum(): int =
   var num = 0
@@ -35,37 +51,44 @@ proc getNum(): int =
       num = cast[int](data[y])
     return num
 
-proc insertData(name:string = "nil"): void =
-  # Used to insert a new note file name into the database
+proc insertMeta(name:string, nice_name:string, tags:string = nil): void =
+  # used to insert data into the meta table
+  # nice name should be named like 'notes' or 'misc'
   var date = getDateStr()
-  db.exec(sql"INSERT INTO meta (name, date) VALUES (?, ?)", name, date)
-  info("Inserted data:", name, " into table")
+  db.exec(sql"INSERT INTO meta (table_name, nice_name, last_Edit, fullpath, tags) VALUES(?,?,?,?,?)", name, nice_name, date, currdur, tags)
+  info("Inserted data:", currdur&nice_name, " into meta")
 
-proc getData(): seq =
-  # This will return the names on all entries in the meta table
+proc insertData(table:string, note:string, tags:string = nil): void =
+  # Used to insert data into a note table
+  var date = getDateStr()
+  db.exec(sql"INSERT INTO ? (date, note, tag) VALUES (?, ?, ?)", date, note, date)
+  info("Inserted data:", note, " into", table)
+
+proc getmeta(table:string): seq =
   var data = @[""]
   data.delete(0)
-  for x in db.rows(sql"SELECT * FROM meta"):
-    data.add(x[0])
+  for x in db.rows(sql"SELECT table_name FROM meta WHERE fullpath = ?", currdur):
+    data.add(x)
   return data
 
-proc inData(name:string = "nil"): bool =
-  # This will be used to check if a name is already in the database
-  # This will return true upon success and false upon failure
-  var data = db.getValue(sql"SELECT name FROM meta WHERE name = ?", name)
-  if(data != ""):
-    return true
-  else:
-    return false
+proc getnote(table:seq): seq =
+  var data = @[""]
+  data.delete(0)
+  for x in db.rows(sql"SELECT * FROM ?", table[0]):
+    data.add(x)
+  info("Retrieved notes from table:", table)
+  return data
 
-proc delData(name:string ="nil"): void =
+proc delmeta(table:string): void =
+  db.exec(sql"DELETE FROM meta WHERE table_name = ?", table)
+  info("Removed data:", table, " from meta.")
+
+proc delData(table:string): void =
   # This procedure will remove a given row from the database. 
   # Used by the clear procedure
-  db.exec(sql"DELETE FROM meta WHERE name = ?", name)
-  info("Removed data:", name, " from database.")
+  db.exec(sql"DROP ?", table)
+  info("Removed table:", table, " from database.")
 
-proc print_db(filename = dirLoc&"metadata.db"): void =
-  #prints out names of all storage files
-  var data = getData()
-  for i in 0..(high(data)):
-    echo data[i] 
+proc print_db(): void =
+  #prints out names of all note tables from meta
+  db.exec(sql"SELECT table_name FROM meta")
