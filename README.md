@@ -26,7 +26,7 @@ which prints out all the notes in the note table.
 This will create a new note table called test. This can be used to keep notes separate from each other.
 
 `note -c`
-! Currently Being Rewritten !
+The -c flag will remove a specified notes table from the db. When no note table is specified running this will clear the default notes table. 
 
 `note -h`
 This simply opens the help menu, which really is just a few printed statements
@@ -34,6 +34,3 @@ on the flags that can be used in the program.
 
 `./note -l`
 Simply lists all notes created that are stored in the db
-
-`./note -p [filename]`
-Prints the contents of a specified file
