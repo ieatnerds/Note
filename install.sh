@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$(nim c -d:release --threads:on note.nim) # make a release build of note
+$(nim c -d:release note.nim) # make a release build of note
 $(mkdir -p /var/data/Note)
 $(chmod a+w /var/data/Note)
 $(cp ./note /var/data/Note/note)

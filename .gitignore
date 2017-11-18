@@ -5,3 +5,5 @@ note
 *.db
 *.sql
 *.sh
+*.html
+profinstall.sh

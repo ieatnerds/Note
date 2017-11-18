@@ -7,28 +7,42 @@
 # This note will have several options to append things such as dates to the
 # note. These messages will be written to a file called notes.txt
 
-###                    ###
-### Imports & Includes ###
-###                    ###
+#               #
+# Documentation #
+#               #
+## This is the documentation for the note module
+
+
+
+#                    #
+# Imports & Includes #
+#                    #
 
 import 
-  strutils, osproc, os, times,
+  strutils, osproc, os, times, nimprof,
   terminal, sequtils, db_sqlite, typetraits
 
 include sqlutil # Also drags logutil and util with it
 
-### Variables ###
+# Variables #
 var message = ""
 
-### Types ###
+# Types #
 type
   argError* = object of Exception
 
-###       ###
-### Flags ###
-###       ###
+#       #
+# Flags #
+#       #
+##
+## Flag Procedures
+## ===============
+##
 
 proc help(): void =
+  ##
+  ## Help flag procedure
+  ##
   # This flag will display help options to the console when used.
   setForegroundColor(fgBlue)
   stdout.write "Help! \n"
@@ -42,10 +56,12 @@ proc help(): void =
   writeStyled "5. -r For reading contents of note table\n"
   resetAttributes()
   stdout.write "\n"
-  info("Help menu accessed")
   quit()
 
 proc clear(files: seq = @["notes"]): void =
+  ##
+  ## Clear flag procedure
+  ##
   info("Clear files was called.")
   echo "Would you like to remove the following?:"
   for i in 0..high(files):
@@ -54,16 +70,17 @@ proc clear(files: seq = @["notes"]): void =
   var ans = readLine(stdin)
   if(ans == "y"):
     for i in 0..high(files):
-      delData(files[i]) # Removes the actual .txt file
-      delmeta(files[i]) # remove entry from database
-    echo "Removed files."
+      delData(files[i]) 
+      delmeta(files[i])
+      echo "Removed table: ",files[i]
+      info("Removed table: ", files[i])
   else:
-    info("No files were removed.")
-    echo "No files were removed."
+    info("No tables were removed.")
+    echo "No notes were removed."
 
-###            ###
-### Procedures ###
-###            ###
+#            #
+# Procedures #
+#            #
  
 proc isArg(arg: string): bool =
   # Returns true if passed string starts with "-"
@@ -77,7 +94,6 @@ proc writeMess(table:string, message:string): void =
   # This procedure will write a give message to the open file 
   # and then it will close the file, assuming that the file should not 
   # be kept open when we are no longer using it.
-  notice("Calling insertData")
   insertData(table, message)
   info("Note table:", table, " was written to.")
 
@@ -103,25 +119,19 @@ proc main(): void =
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
-        notice("Argument clear called")
         var name: string
-        notice("argument read called")
         if(k+1 >= len(arguments)):
-          notice("no table specified for read")
           name = table_name&"notes"
         else:
           name = table_name&arguments[k+1]
-          notice("reading table:", name)
         delMeta(name)
         delData(name)
         quit()
         
       elif(arguments[i] == "-h"): # Help
-        notice("argument help called")
         help()
         
       elif(arguments[i] == "-t"): # table
-        notice("argument table called")
         k = i+1
         table_name = table_name&arguments[k]
         nice_name = nicename&arguments[k]
@@ -130,18 +140,14 @@ proc main(): void =
         # arguments.add("")
         
       elif(arguments[i] == "-l"): # Print from SQL
-        notice("print from sql called")
         print_db()
       
       elif(arguments[i] == "-r"): # read table Contents
         var name: string
-        notice("argument read called")
         if(k+1 >= len(arguments)):
-          notice("no table specified for read")
           name = table_name&"notes"
         else:
           name = table_name&arguments[k+1]
-          notice("reading table:", name)
 
         printTable(name)
         quit()
@@ -152,7 +158,6 @@ proc main(): void =
         raise newException(argError, "Argument not recognized.")
 
     else:
-      notice("adding to message")
       message.add(arguments[i])
       message.add(" ")
   
@@ -168,8 +173,8 @@ proc main(): void =
   writeMess(table_name, message)
   db.close
 
-###      ###
-### Main ###
-###      ###
+#      #
+# Main #
+#      #
 
 main()
