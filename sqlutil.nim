@@ -62,7 +62,6 @@ proc insertData(table:string, note:string, tags:string = nil): void =
   # Used to insert data into a note table
   var date = getDateStr()
   var name = replace(table, currDur, "")
-  echo table, " ", name
   db.exec(sql"INSERT INTO ? (date, note, tags) VALUES (?, ?, ?)", table, date, note, tags)
   info("Inserted data:", note, " into", table)
 
@@ -88,7 +87,7 @@ proc delmeta(table:string): void =
 proc delData(table:string): void =
   # This procedure will remove a given row from the database. 
   # Used by the clear procedure
-  db.exec(sql"DROP ?", table)
+  db.exec(sql"DROP TABLE ?", table)
   info("Removed table:", table, " from database.")
 
 proc print_db(): void =

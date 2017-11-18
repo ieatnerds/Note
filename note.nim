@@ -18,9 +18,7 @@ import
 include sqlutil # Also drags logutil and util with it
 
 ### Variables ###
-var
-  file: File
-  message = ""
+var message = ""
 
 ### Types ###
 type
@@ -41,7 +39,7 @@ proc help(): void =
   writeStyled "2. -t For specifying a note table\n"
   writeStyled "3. -c To remove notes.txt\n"
   writeStyled "4. -l Lists all files written to in db\n"
-  writeStyled "5. -p For printing contents of note file\n"
+  writeStyled "5. -r For reading contents of note table\n"
   resetAttributes()
   stdout.write "\n"
   info("Help menu accessed")
@@ -80,7 +78,6 @@ proc writeMess(table:string, message:string): void =
   # and then it will close the file, assuming that the file should not 
   # be kept open when we are no longer using it.
   notice("Calling insertData")
-  echo table, message
   insertData(table, message)
   info("Note table:", table, " was written to.")
 
@@ -107,8 +104,17 @@ proc main(): void =
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
         notice("Argument clear called")
-        # TODO fucking make this good...
-        discard 0
+        var name: string
+        notice("argument read called")
+        if(k+1 >= len(arguments)):
+          notice("no table specified for read")
+          name = table_name&"notes"
+        else:
+          name = table_name&arguments[k+1]
+          notice("reading table:", name)
+        delMeta(name)
+        delData(name)
+        quit()
         
       elif(arguments[i] == "-h"): # Help
         notice("argument help called")
