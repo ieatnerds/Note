@@ -11,6 +11,8 @@
 # Documentation #
 #               #
 ## This is the documentation for the note module
+##
+## This was made in an attempt to create easy, quick notes while remaining in the terminal.
 
 
 
@@ -19,7 +21,7 @@
 #                    #
 
 import 
-  strutils, osproc, os, times, nimprof,
+  strutils, osproc, os, times,
   terminal, sequtils, db_sqlite, typetraits
 
 include sqlutil # Also drags logutil and util with it
@@ -34,16 +36,13 @@ type
 #       #
 # Flags #
 #       #
-##
 ## Flag Procedures
 ## ===============
-##
+## These are the procedures that are linked with a command flag for the program.
 
 proc help(): void =
-  ##
   ## Help flag procedure
-  ##
-  # This flag will display help options to the console when used.
+  ## This flag will display help options to the console when used.
   setForegroundColor(fgBlue)
   stdout.write "Help! \n"
   writeStyled "This is the help menu for note.nim \n"
@@ -59,9 +58,7 @@ proc help(): void =
   quit()
 
 proc clear(files: seq = @["notes"]): void =
-  ##
   ## Clear flag procedure
-  ##
   info("Clear files was called.")
   echo "Would you like to remove the following?:"
   for i in 0..high(files):
@@ -83,31 +80,27 @@ proc clear(files: seq = @["notes"]): void =
 #            #
  
 proc isArg(arg: string): bool =
-  # Returns true if passed string starts with "-"
+  ## Returns true if passed string starts with "-"
   if arg.startsWith("-"):
     return true
   else:
     return false
 
-# TODO rewrite to add data to note table
 proc writeMess(table:string, message:string): void =
-  # This procedure will write a give message to the open file 
-  # and then it will close the file, assuming that the file should not 
-  # be kept open when we are no longer using it.
+  ## This procedure will insert the given message into the specified table
   insertData(table, message)
   info("Note table:", table, " was written to.")
 
-# TODO rewrite to print from note table
 proc printTable(table:string): void =
-  #cats from file name
+  ## Prints out data from specified table.
   var info = @[""]
   info = getnote(table)
   for x in info:
     echo x
 
 proc main(): void =
-  # Main will do the heavy lifting of the program, as usual, tying everything
-  # else in the program together.
+  ## Main will do the heavy lifting of the program, as usual, tying everything
+  ## else in the program together.
   var
     arguments = commandLineParams()
     k = 0
@@ -136,8 +129,6 @@ proc main(): void =
         table_name = table_name&arguments[k]
         nice_name = nicename&arguments[k]
         arguments[k] = "" # Preserves list length
-        # arguments.delete(k)
-        # arguments.add("")
         
       elif(arguments[i] == "-l"): # Print from SQL
         print_db()

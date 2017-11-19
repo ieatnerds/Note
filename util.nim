@@ -10,4 +10,3 @@ else: # Else should be unix
   const dirLoc = "/var/data/Note/"
 
 let currDur = getCurrentDir()&"/"
-

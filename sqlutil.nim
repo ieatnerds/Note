@@ -1,12 +1,11 @@
 # Utility file for sql database interactions.
+
+## This is the documentation for the sqlutil module.
 import db_sqlite, sequtils, os, osproc, times, strutils
 
 include logutil # drags util with it
 
-
-# Database dirLoc
-
-### Databse Setup ###
+# Databse Setup #
 var exist = false
 if(fileExists(dirLoc&"metadata.db")):
   exist = true
@@ -14,17 +13,17 @@ if(fileExists(dirLoc&"metadata.db")):
 let db = open(dirLoc&"metadata.db", nil, nil, nil)
 info("Opened sql database.")
 
-### Procedures
+## Procedures
 proc createTable(name:string = "meta"): void =
-  # This will be used to create a given table in the database
-  # any columns that need to be added can be added in its own
-  # procedure using the alter table command
+  ## This will be used to create a given table in the database
+  ## any columns that need to be added can be added in its own
+  ## procedure using the alter table command
   
   db.exec(sql"CREATE TABLE IF NOT EXISTS ? (id INTEGER PRIMARY KEY)", name)
   info("Created table:", name)
 
 proc createMeta(): void =
-  # this procedure will create the main "meta" table.
+  ## this procedure will create the main "meta" table.
   createTable()
   db.exec(sql"ALTER TABLE meta ADD COLUMN table_name STRING")
   db.exec(sql"ALTER TABLE meta ADD COLUMN nice_name STRING")
@@ -52,14 +51,14 @@ proc getNum(): int =
     return num
 
 proc insertMeta(name:string, nice_name:string, tags:string = nil): void =
-  # used to insert data into the meta table
-  # nice name should be named like 'notes' or 'misc'
+  ## used to insert data into the meta table
+  ## nice name should be named like 'notes' or 'misc'
   var date = getDateStr()
   db.exec(sql"INSERT INTO meta (table_name, nice_name, last_Edit, full_path, tags) VALUES(?,?,?,?,?)", name, nice_name, date, currdur, tags)
   info("Inserted data:", currdur&nice_name, " into meta")
 
 proc insertData(table:string, note:string, tags:string = nil): void =
-  # Used to insert data into a note table
+  ## Used to insert data into a note table
   var date = getDateStr()
   var name = replace(table, currDur, "")
   db.exec(sql"INSERT INTO ? (date, note, tags) VALUES (?, ?, ?)", table, date, note, tags)
@@ -85,11 +84,11 @@ proc delmeta(table:string): void =
   info("Removed data:", table, " from meta.")
 
 proc delData(table:string): void =
-  # This procedure will remove a given row from the database. 
-  # Used by the clear procedure
+  ## This procedure will remove a given row from the database. 
+  ## Used by the clear procedure
   db.exec(sql"DROP TABLE ?", table)
   info("Removed table:", table, " from database.")
 
 proc print_db(): void =
-  #prints out names of all note tables from meta
+  ## prints out names of all note tables from meta
   db.exec(sql"SELECT table_name FROM meta")
