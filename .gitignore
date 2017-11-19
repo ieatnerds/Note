@@ -7,3 +7,5 @@ note
 *.sh
 *.html
 profinstall.sh
+.idea/
+.vscode/
