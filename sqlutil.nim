@@ -50,12 +50,12 @@ proc getNum(): int =
       num = cast[int](data[y])
     return num
 
-proc insertMeta(name:string, nice_name:string, tags:string = nil): void =
+proc insertMeta(name:string, niceName:string, tags:string = nil): void =
   ## used to insert data into the meta table
   ## nice name should be named like 'notes' or 'misc'
   var date = getDateStr()
-  db.exec(sql"INSERT INTO meta (table_name, nice_name, last_Edit, full_path, tags) VALUES(?,?,?,?,?)", name, nice_name, date, currdur, tags)
-  info("Inserted data:", currdur&nice_name, " into meta")
+  db.exec(sql"INSERT INTO meta (table_name, nice_name, last_Edit, full_path, tags) VALUES(?,?,?,?,?)", name, niceName, date, currdur, tags)
+  info("Inserted data:", currdur&niceName, " into meta")
 
 proc insertData(table:string, note:string, tags:string = nil): void =
   ## Used to insert data into a note table

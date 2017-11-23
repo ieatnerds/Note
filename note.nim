@@ -106,7 +106,7 @@ proc main(): void =
     arguments = commandLineParams()
     k = 0
     table_name = currDur
-    nice_name = ""
+    niceName = ""
   if(not exist):
     createMeta()
 
@@ -128,7 +128,7 @@ proc main(): void =
       elif(arguments[i] == "-t"): # table
         k = i+1
         table_name = table_name&arguments[k]
-        nice_name = nicename&arguments[k]
+        niceName = niceName&arguments[k]
         arguments[k] = "" # Preserves list length
 
       elif(arguments[i] == "-l"): # Print from SQL
@@ -156,10 +156,10 @@ proc main(): void =
   if(table_name == currDur):
     notice("No table specified. setting to default")
     table_name = table_name&"notes"
-    nice_name = "notes"
+    niceName = "notes"
 
   createNote(table_name)
-  insertMeta(table_name, nice_name)
+  insertMeta(table_name, niceName)
 
   notice("calling write message in main with table:",table_name,
          "and note", message)
