@@ -2,7 +2,7 @@
 # importantnk@gmail.com
 #
 # This will create a note based on the command line arguments used
-# to run the program. 
+# to run the program.
 #
 # This note will have several options to append things such as dates to the
 # note. These messages will be written to a file called notes.txt
@@ -12,15 +12,14 @@
 #               #
 ## This is the documentation for the note module
 ##
-## This was made in an attempt to create easy, quick notes while remaining in the terminal.
-
-
+## This was made in an attempt to create easy, quick notes while remaining in
+## the terminal.
 
 #                    #
 # Imports & Includes #
 #                    #
 
-import 
+import
   strutils, osproc, os, times,
   terminal, sequtils, db_sqlite, typetraits
 
@@ -41,8 +40,10 @@ type
 ## These are the procedures that are linked with a command flag for the program.
 
 proc help(): void =
+
   ## Help flag procedure
   ## This flag will display help options to the console when used.
+
   setForegroundColor(fgBlue)
   stdout.write "Help! \n"
   writeStyled "This is the help menu for note.nim \n"
@@ -67,8 +68,8 @@ proc clear(files: seq = @["notes"]): void =
   var ans = readLine(stdin)
   if(ans == "y"):
     for i in 0..high(files):
-      delData(files[i]) 
-      delmeta(files[i])
+      delData(files[i])
+      delMeta(files[i])
       echo "Removed table: ",files[i]
       info("Removed table: ", files[i])
   else:
@@ -78,7 +79,7 @@ proc clear(files: seq = @["notes"]): void =
 #            #
 # Procedures #
 #            #
- 
+
 proc isArg(arg: string): bool =
   ## Returns true if passed string starts with "-"
   if arg.startsWith("-"):
@@ -94,7 +95,7 @@ proc writeMess(table:string, message:string): void =
 proc printTable(table:string): void =
   ## Prints out data from specified table.
   var info = @[""]
-  info = getnote(table)
+  info = getNote(table)
   for x in info:
     echo x
 
@@ -108,7 +109,7 @@ proc main(): void =
     nice_name = ""
   if(not exist):
     createMeta()
-    
+
   for i in 0..(high(arguments)):
     if(isArg(arguments[i])):
       if(arguments[i] == "-c"): # Clear
@@ -120,19 +121,19 @@ proc main(): void =
         delMeta(name)
         delData(name)
         quit()
-        
+
       elif(arguments[i] == "-h"): # Help
         help()
-        
+
       elif(arguments[i] == "-t"): # table
         k = i+1
         table_name = table_name&arguments[k]
         nice_name = nicename&arguments[k]
         arguments[k] = "" # Preserves list length
-        
+
       elif(arguments[i] == "-l"): # Print from SQL
         print_db()
-      
+
       elif(arguments[i] == "-r"): # read table Contents
         var name: string
         if(k+1 >= len(arguments)):
@@ -151,7 +152,7 @@ proc main(): void =
     else:
       message.add(arguments[i])
       message.add(" ")
-  
+
   if(table_name == currDur):
     notice("No table specified. setting to default")
     table_name = table_name&"notes"
@@ -160,7 +161,8 @@ proc main(): void =
   createNote(table_name)
   insertMeta(table_name, nice_name)
 
-  notice("calling write message in main with table:",table_name, "and note", message)
+  notice("calling write message in main with table:",table_name,
+         "and note", message)
   writeMess(table_name, message)
   db.close
 

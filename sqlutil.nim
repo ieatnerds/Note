@@ -64,14 +64,14 @@ proc insertData(table:string, note:string, tags:string = nil): void =
   db.exec(sql"INSERT INTO ? (date, note, tags) VALUES (?, ?, ?)", table, date, note, tags)
   info("Inserted data:", note, " into", table)
 
-proc getmeta(table:string): seq =
+proc getMeta(table:string): seq =
   var data = @[""]
   data.delete(0)
   for x in db.rows(sql"SELECT table_name FROM meta WHERE fullpath = ?", currdur):
     data.add(x)
   return data
 
-proc getnote(table:string): seq =
+proc getNote(table:string): seq =
   var data = @[""]
   data.delete(0)
   for x in db.rows(sql"SELECT * FROM ?", table):
@@ -79,7 +79,7 @@ proc getnote(table:string): seq =
   info("Retrieved notes from table:", table)
   return data
 
-proc delmeta(table:string): void =
+proc delMeta(table:string): void =
   db.exec(sql"DELETE FROM meta WHERE table_name = ?", table)
   info("Removed data:", table, " from meta.")
 

@@ -5,7 +5,7 @@ import os, osproc
 
 # Define note folder based on operating system
 when defined windows:
-  var dirLoc = "C:/somewhere/over/the/rainbow"
+  const dirLoc = "C:/somewhere/over/the/rainbow"
 else: # Else should be unix
   const dirLoc = "/var/data/Note/"
 
