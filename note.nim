@@ -21,7 +21,7 @@
 
 import
   strutils, osproc, os, times,
-  terminal, sequtils, db_sqlite, typetraits
+  terminal, db_sqlite, typetraits
 
 include sqlutil # Also drags logutil and util with it
 
