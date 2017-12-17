@@ -34,3 +34,15 @@ on the flags that can be used in the program.
 
 `./note -l`
 Simply lists all notes created that are stored in the db
+
+## Issues & Feature Requests
+
+If you find any issues please report them [Here](https://github.com/ieatnerds/Note/issues "Issues")
+
+You may also use this to request features or to recommend changes.
+
+## Documentation
+
+The source code should be pretty well commented, and there are documentation comments.
+To generate documentation just run `nim doc note.nim`, for the utility modules just replace note.nim with whichever module
+you wish to have documentation on.
