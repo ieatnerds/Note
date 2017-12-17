@@ -9,3 +9,4 @@ note
 profinstall.sh
 .idea/
 .vscode/
+*.nimble

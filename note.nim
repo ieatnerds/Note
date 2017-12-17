@@ -7,17 +7,18 @@
 # This note will have several options to append things such as dates to the
 # note. These messages will be written to a file called notes.txt
 
-#               #
-# Documentation #
-#               #
+#               
+# Documentation 
+#               
+## :Author: Nicholas Kelly
 ## This is the documentation for the note module
 ##
 ## This was made in an attempt to create easy, quick notes while remaining in
 ## the terminal.
 
-#                    #
-# Imports & Includes #
-#                    #
+#                    
+# Imports & Includes 
+#                    
 
 import
   strutils, osproc, os, times,
@@ -25,21 +26,22 @@ import
 
 include sqlutil # Also drags logutil and util with it
 
-# Variables #
+# Variables 
 var message = ""
 
-# Types #
+# Types 
 type
   argError* = object of Exception
 
-#       #
-# Flags #
-#       #
+#       
+# Flags 
+#       
+
 ## Flag Procedures
 ## ===============
 ## These are the procedures that are linked with a command flag for the program.
 
-proc help(): void =
+proc help*(): void =
 
   ## Help flag procedure
   ## This flag will display help options to the console when used.
@@ -58,7 +60,7 @@ proc help(): void =
   stdout.write "\n"
   quit()
 
-proc clear(files: seq = @["notes"]): void =
+proc clear*(files: seq = @["notes"]): void =
   ## Clear flag procedure
   info("Clear files was called.")
   echo "Would you like to remove the following?:"
@@ -76,23 +78,29 @@ proc clear(files: seq = @["notes"]): void =
     info("No tables were removed.")
     echo "No notes were removed."
 
-#            #
-# Procedures #
-#            #
+#            
+# Procedures 
+#            
 
-proc isArg(arg: string): bool =
+## Procedures
+## ==========
+## Tese are the regular procedures for note.nim
+
+proc isArg*(arg: string): bool =
   ## Returns true if passed string starts with "-"
+  ## Returns false otherwise.
   if arg.startsWith("-"):
     return true
   else:
     return false
 
-proc writeMess(table:string, message:string): void =
+proc writeMess*(table:string, message:string): void =
   ## This procedure will insert the given message into the specified table
+  ## Usually into the table for the directory you're currently in
   insertData(table, message)
   info("Note table:", table, " was written to.")
 
-proc printTable(table:string): void =
+proc printTable*(table:string): void =
   ## Prints out data from specified table.
   var info = @[""]
   info = getNote(table)
@@ -100,8 +108,8 @@ proc printTable(table:string): void =
     echo x
 
 proc main(): void =
-  ## Main will do the heavy lifting of the program, as usual, tying everything
-  ## else in the program together.
+  # Main will do the heavy lifting of the program, as usual, tying everything
+  # else in the program together.
   var
     arguments = commandLineParams()
     k = 0
@@ -166,8 +174,8 @@ proc main(): void =
   writeMess(table_name, message)
   db.close
 
-#      #
-# Main #
-#      #
+#      
+# Main 
+#      
 
 main()
