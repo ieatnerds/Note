@@ -60,6 +60,7 @@ proc help*(): void =
   stdout.write "\n"
   quit()
 
+
 proc clear*(files: seq = @["notes"]): void =
   ## Clear flag procedure
   info("Clear files was called.")
@@ -94,11 +95,13 @@ proc isArg*(arg: string): bool =
   else:
     return false
 
+
 proc writeMess*(table:string, message:string): void =
   ## This procedure will insert the given message into the specified table
   ## Usually into the table for the directory you're currently in
   insertData(table, message)
   info("Note table:", table, " was written to.")
+
 
 proc printTable*(table:string): void =
   ## Prints out data from specified table.
@@ -106,6 +109,7 @@ proc printTable*(table:string): void =
   info = getNote(table)
   for x in info:
     echo x
+
 
 proc main(): void =
   # Main will do the heavy lifting of the program, as usual, tying everything
